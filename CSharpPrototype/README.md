@@ -6,8 +6,8 @@ physical buttons.
 
 Numpad 1 through 5
 
-* Short press (running) → start timer and pause other timers
-* Short press (paused) → pause timer
+* Short press (paused) → start timer and pause other timers
+* Short press (running) → pause timer
 * Long press → reset timer
 
 Numpad 0
