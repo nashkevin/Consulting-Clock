@@ -14,8 +14,11 @@ const uint8_t digitEncoding[] =
     0b01111101,
     0b00000111,
     0b01111111,
-    0b01101111,
+    0b01101111
 };
+
+uint8_t display[] = { 0, 0, 0, 0 };
+
 
 TM1637::TM1637(uint8_t pinCLK, uint8_t pinDIO)
 {
@@ -29,14 +32,8 @@ TM1637::TM1637(uint8_t pinCLK, uint8_t pinDIO)
     gpio_put(pinCLK, LOW);
     gpio_put(pinDIO, LOW);
 
-    printf("clk function %d\n", gpio_get_function(pinCLK));
-    printf("dio function %d\n", gpio_get_function(pinDIO));
-
-    // gpio_set_function(pinCLK, GPIO_FUNC_SIO);
-    // gpio_set_function(pinDIO, GPIO_FUNC_SIO);
-
-    // gpio_pull_up(pinCLK);
-    // gpio_pull_up(pinDIO);
+    gpio_set_function(pinCLK, GPIO_FUNC_SIO);
+    gpio_set_function(pinDIO, GPIO_FUNC_SIO);
 
     pause();
 }
@@ -66,6 +63,19 @@ void TM1637::setSegments(const uint8_t *bytes, const uint8_t length, uint8_t pos
     }
     stop();
     writeDisplayCommand();
+}
+
+void TM1637::setTime(uint8_t minutes, uint8_t seconds)
+{
+    minutes = (99 < minutes) ? 99 : minutes;
+    seconds = (99 < seconds) ? 99 : seconds; // not rolling extra seconds into minutes, deal with it
+
+    display[0] = digitEncoding[minutes / 10];
+    display[1] = digitEncoding[minutes % 10] | SEG_SEP;
+    display[2] = digitEncoding[seconds / 10];
+    display[3] = digitEncoding[seconds % 10];
+
+    setSegments(display);
 }
 
 

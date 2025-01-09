@@ -1,97 +1,107 @@
 #include <stdio.h>
 #include "pico/stdlib.h"
-#include "hardware/clocks.h"
+#include "pico/time.h"
 #include "TM1637.hpp"
 
-uint8_t testdone[] =
+uint8_t testOff[] =
 {
     0, 0, 0, 0
 };
+uint8_t testOn[] =
+{
+    0b00000110, 0b11011011, 0b01001111, 0b01100110 // 1234
+};
+
+const uint8_t PIN_DISP_1_CLK = 2;
+const uint8_t PIN_DISP_1_DIO = 3;
+const uint8_t PIN_DISP_2_CLK = 4;
+const uint8_t PIN_DISP_2_DIO = 5;
+const uint8_t PIN_DISP_3_CLK = 6;
+const uint8_t PIN_DISP_3_DIO = 7;
+const uint8_t PIN_DISP_4_CLK = 8;
+const uint8_t PIN_DISP_4_DIO = 9;
+const uint8_t PIN_DISP_5_CLK = 10;
+const uint8_t PIN_DISP_5_DIO = 11;
+
+const uint8_t PIN_SWCH = 19;
+
+const uint32_t US_TO_MIN = 60000000;
+const uint32_t US_TO_SEC = 1000000;
+
+uint8_t switchState;
+uint64_t startTime;
+uint64_t currentTime;
+uint8_t currentMinute;
+uint8_t currentSecond;
+
+void setupGPIO()
+{
+    stdio_init_all();
+
+    gpio_init(PIN_SWCH);
+    gpio_set_dir(PIN_SWCH, GPIO_IN);
+    gpio_pull_up(PIN_SWCH);
+
+    gpio_init(PIN_DISP_1_CLK);
+    gpio_set_dir(PIN_DISP_1_CLK, GPIO_OUT);
+    gpio_init(PIN_DISP_1_DIO);
+    gpio_set_dir(PIN_DISP_1_DIO, GPIO_OUT);
+
+    gpio_init(PIN_DISP_2_CLK);
+    gpio_set_dir(PIN_DISP_2_CLK, GPIO_OUT);
+    gpio_init(PIN_DISP_2_DIO);
+    gpio_set_dir(PIN_DISP_2_DIO, GPIO_OUT);
+
+    gpio_init(PIN_DISP_3_CLK);
+    gpio_set_dir(PIN_DISP_3_CLK, GPIO_OUT);
+    gpio_init(PIN_DISP_3_DIO);
+    gpio_set_dir(PIN_DISP_3_DIO, GPIO_OUT);
+
+    gpio_init(PIN_DISP_4_CLK);
+    gpio_set_dir(PIN_DISP_4_CLK, GPIO_OUT);
+    gpio_init(PIN_DISP_4_DIO);
+    gpio_set_dir(PIN_DISP_4_DIO, GPIO_OUT);
+
+    gpio_init(PIN_DISP_5_CLK);
+    gpio_set_dir(PIN_DISP_5_CLK, GPIO_OUT);
+    gpio_init(PIN_DISP_5_DIO);
+    gpio_set_dir(PIN_DISP_5_DIO, GPIO_OUT);
+}
 
 int main() {
-    stdio_init_all();
-    printf("zzLET'S GIVE THIS A TRY\n");
+    setupGPIO();
+    printf("ttHERE WE GO\n");
+    startTime = time_us_64();
 
-    gpio_init(PICO_DEFAULT_LED_PIN);
-    gpio_set_dir(PICO_DEFAULT_LED_PIN, GPIO_OUT);
-    //gpio_set_outover(PICO_DEFAULT_LED_PIN, GPIO_OVERRIDE_INVERT);
+    TM1637 display1(PIN_DISP_1_CLK, PIN_DISP_1_DIO);
+    TM1637 display2(PIN_DISP_2_CLK, PIN_DISP_2_DIO);
+    TM1637 display3(PIN_DISP_3_CLK, PIN_DISP_3_DIO);
+    TM1637 display4(PIN_DISP_4_CLK, PIN_DISP_4_DIO);
+    TM1637 display5(PIN_DISP_5_CLK, PIN_DISP_5_DIO);
 
-    gpio_init(5);
-    gpio_set_dir(5, GPIO_IN);
-    gpio_pull_up(5);
-
-    gpio_init(27);
-    gpio_set_dir(27, GPIO_OUT);
-    gpio_init(26);
-    gpio_set_dir(26, GPIO_OUT);
-
-    TM1637 display(27, 26);
-
-    bool isPressed = false;
-    
-    display.setBrightness(0);
+    display1.setBrightness(0);
+    display2.setBrightness(0);
+    display3.setBrightness(0);
+    display4.setBrightness(0);
+    display5.setBrightness(0);
 
     while (true)
     {
-        testdone[0] = SEG_A;
-        display.setSegments(testdone);
-        sleep_ms(75);
-        testdone[0] = 0;
-        testdone[1] = SEG_A;
-        display.setSegments(testdone);
-        sleep_ms(75);
-        testdone[1] = 0;
-        testdone[2] = SEG_A;
-        display.setSegments(testdone);
-        sleep_ms(75);
-        testdone[2] = 0;
-        testdone[3] = SEG_A;
-        display.setSegments(testdone);
-        sleep_ms(30);
-        testdone[3] = SEG_B;
-        display.setSegments(testdone);
-        sleep_ms(30);
-        testdone[3] = SEG_C;
-        display.setSegments(testdone);
-        sleep_ms(30);
-        testdone[3] = SEG_D;
-        display.setSegments(testdone);
-        sleep_ms(75);
-        testdone[3] = 0;
-        testdone[2] = SEG_D;
-        display.setSegments(testdone);
-        sleep_ms(75);
-        testdone[2] = 0;
-        testdone[1] = SEG_D;
-        display.setSegments(testdone);
-        sleep_ms(75);
-        testdone[1] = 0;
-        testdone[0] = SEG_D;
-        display.setSegments(testdone);
-        sleep_ms(30);
-        testdone[0] = SEG_E;
-        display.setSegments(testdone);
-        sleep_ms(30);
-        testdone[0] = SEG_F;
-        display.setSegments(testdone);
-        sleep_ms(30);
-    }
-    
+        switchState = gpio_get(PIN_SWCH);
+        printf("switch = %d\n", switchState);
 
-    for (uint8_t i = 0; i <= 8; i++)
-    {
-        if (i == 8)
+        if (switchState == LOW)
         {
-            i = 0;
+            currentTime = time_us_64();
+            currentMinute = currentTime / US_TO_MIN;
+            currentSecond = currentTime % US_TO_MIN / US_TO_SEC;
+
+            display1.setTime(currentMinute, currentSecond);;
+            display2.setTime(currentMinute, currentSecond);
+            display3.setTime(currentMinute, currentSecond);
+            display4.setTime(currentMinute, currentSecond);
+            display5.setTime(currentMinute, currentSecond);
         }
-        // if (isPressed)
-        // {
-            
-        // }
-        // isPressed = gpio_get(5) == 0;
-        printf("%d\n", i);
-        display.setBrightness(i);
-        sleep_ms(1000);
-        //display.setSegments(testdone);
+        sleep_ms(500); // let our chip rest after all that long division
     }
 }
