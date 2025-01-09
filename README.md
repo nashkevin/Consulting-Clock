@@ -1,4 +1,3 @@
-# Work-Timer-Box
 🚧 Under Construction 🚧
 
 A device for keeping track of your productivity
