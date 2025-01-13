@@ -24,12 +24,12 @@ void TimerDisplay::UpdateDisplay(bool isShowZero)
 
     if (isRunning || 0 < seconds || 0 < minutes)
     {
-        hw.setTime(minutes, seconds);
+        hw.SetTime(minutes, seconds);
     }
     else if (isShowZero)
     {
-        hw.setZero();
+        hw.SetZero();
     } else {
-        hw.setOff();
+        hw.SetOff();
     }
 }

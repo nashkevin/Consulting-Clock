@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <cstdint>
 #include "consulting_clock.hpp"
 #include "pico/stdlib.h"
@@ -30,34 +31,15 @@ void TM1637::setBrightness(uint8_t brightness)
     WriteDisplayCommand();
 }
 
-void TM1637::setSegments(const uint8_t bytes[], const uint8_t length, uint8_t position)
+void TM1637::SetTime(uint16_t minutes, uint16_t seconds)
 {
-    if (DIGIT_COUNT < position)
-    {
-        position = DIGIT_COUNT;
-    }
-    WriteDataCommand();
-    Start();
-
-    WriteByte(CMD_ADDR | position);
-
-    for (uint8_t i = 0; i < length; i++)
-    {
-        WriteByte(bytes[i]);
-    }
-    Stop();
-    WriteDisplayCommand();
-}
-
-void TM1637::setTime(uint16_t minutes, uint16_t seconds)
-{
-    if (DIGIT_COUNT != 4)
+    if (MODULE_COUNT != 4)
     {
         //throw std::logic_error("Only four-digit displays are supported currently");
         return;
     }
 
-    if (minutes <= 99) // possible to display mm:ss
+    if (minutes <= 99) // possible to show mm:ss
     {
         if (minutes < 10)
         {
@@ -77,7 +59,7 @@ void TM1637::setTime(uint16_t minutes, uint16_t seconds)
             display[0] = DIGIT_ENCODING[minutes / MIN_TO_HOUR];      // no room for an H here, but
             display[1] = DIGIT_ENCODING[minutes / MIN_TO_HOUR / 10]; // 10-hour daily tasks are rare
         } else {
-            display[0] = H_ENCODING; // display an H to make it clear we're showing hh:mm
+            display[0] = H_ENCODING; // show an H to make it clear we're showing hh:mm
             display[1] = DIGIT_ENCODING[minutes / MIN_TO_HOUR];
         }
         display[2] = DIGIT_ENCODING[minutes % MIN_TO_HOUR];
@@ -86,28 +68,44 @@ void TM1637::setTime(uint16_t minutes, uint16_t seconds)
 
     display[1] |= SEG_SEP; // set colon lit
 
-    setSegments(display, DIGIT_COUNT, 0);
+    SetSegments(display, MODULE_COUNT, 0);
 }
 
-void TM1637::setZero()
+void TM1637::SetZero()
 {
-    for (uint8_t i = 0; i < DIGIT_COUNT; i++)
+    for (uint8_t i = 0; i < MODULE_COUNT; i++)
     {
         display[i] = DIGIT_ENCODING[0];
     }
-    if (1 < DIGIT_COUNT)
+    if (1 < MODULE_COUNT)
     {
         display[1] |= SEG_SEP;
     }
+
+    SetSegments(display, MODULE_COUNT, 0);
 }
 
-void TM1637::setOff()
+void TM1637::SetOff()
 {
-    for (uint8_t i = 0; i < DIGIT_COUNT; i++)
+    for (uint8_t i = 0; i < MODULE_COUNT; i++)
     {
         display[i] = 0;
-    }    
+    }
+
+    SetSegments(display, MODULE_COUNT, 0);
 }
+
+void TM1637::FlipVertical()
+{
+    for (uint8_t i = 0; i < MODULE_COUNT / 2; i++)
+    {
+        // TODO - need to transfer the colon bit to the new position
+        uint8_t temp = GetFlippedByte(display[i]);
+        display[i] = GetFlippedByte(MODULE_COUNT - (i + 1));
+        display[MODULE_COUNT - (i + 1)] = temp;
+    }
+}
+
 
 void TM1637::Start()
 {
@@ -130,6 +128,27 @@ void TM1637::Stop()
 void TM1637::Pause()
 {
     sleep_us(CLK_PAUSE_US);
+}
+
+void TM1637::SetSegments(const uint8_t bytes[], const uint8_t length, uint8_t position)
+{
+    if (MODULE_COUNT < position)
+    {
+        position = MODULE_COUNT;
+    }
+    WriteDataCommand();
+    Start();
+
+    WriteByte(CMD_ADDR | position);
+
+    for (uint8_t i = 0; i < length; i++)
+    {
+        printf("%d = %d, ", i, bytes[i]);
+        WriteByte(bytes[i]);
+    }
+    printf("\n");
+    Stop();
+    WriteDisplayCommand();
 }
 
 void TM1637::WriteDataCommand()
@@ -166,4 +185,12 @@ void TM1637::WriteByte(uint8_t b)
     
     // commands are answered with an ACK signal,
     // but we're not sophisticated enough to care
+}
+
+uint8_t TM1637::GetFlippedByte(uint8_t b)
+{
+    return
+        (b & (SEG_A | SEG_B | SEG_C)) << 3 |
+        (b & (SEG_D | SEG_E | SEG_F)) >> 3 |
+        (b & (SEG_G | SEG_SEP));
 }

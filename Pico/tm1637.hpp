@@ -1,6 +1,6 @@
 /**
  * @file    tm1637.hpp
- * @brief   Provides control methods for the TM1637 display module.
+ * @brief   Provides control methods for the TM1637 display part.
  * @author  Kevin Nash
  * @date    2025-01-12
  */
@@ -28,7 +28,7 @@ const uint8_t DISP_ON = 0b00001000;
 const uint8_t CLK_PAUSE_US = 10; // microseconds between CLK transmissions
 
 const uint8_t MAX_BRIGHTNESS = 7; // defined by TM1637 spec, 1/16th pulse width increments
-const uint8_t DIGIT_COUNT = 4; // how many sets of 7-segments are in a display unit
+const uint8_t MODULE_COUNT = 4; // how many 7-segment modules are in a display
 
 const uint8_t BITS_IN_BYTE = 8; // a true constant in modern computing
 
@@ -63,31 +63,42 @@ class TM1637
         uint8_t pinClk;
         uint8_t pinDio;
         uint8_t brightness;
-        uint8_t display[DIGIT_COUNT] = { };
+        uint8_t display[MODULE_COUNT] = { };
 
         void Start();
         void Stop();
         void Pause();
 
+        /// @brief Sets the state of one or more 7-segment modules.
+        /// 
+        /// Starting at `position`, writes `bytes` until `length` is reached.
+        /// @param bytes the encoded state(s)
+        /// @param length the number of bytes encoded (how many modules affected)
+        /// @param position starting index of the first affected module
+        void SetSegments(const uint8_t bytes[], const uint8_t length = 1, uint8_t position = 0);
+
         void WriteDataCommand();
         void WriteDisplayCommand();
 
         void WriteByte(uint8_t b);
+
+        /// @brief Flips a single display module vertically
+        /// @return a byte that has the ABC segments swapped with DEF,
+        ///         other bits match `b`
+        static uint8_t GetFlippedByte(uint8_t b);
         
     public:
         TM1637(uint8_t pinClk, uint8_t pinDio);
         
         void setBrightness(uint8_t brightness);
-
-        /// @brief Sets the state of one or more 7-segment displays.
-        /// 
-        /// Starting at position, writes bytes until length is reached.
-        /// @param bytes the encoded state(s)
-        /// @param length the number of bytes encoded (how many displays affected)
-        /// @param position starting index of the first affected display
-        void setSegments(const uint8_t bytes[], const uint8_t length = 1, uint8_t position = 0);
         
-        void setTime(uint16_t minutes, uint16_t seconds);
-        void setZero();
-        void setOff();
+        void SetTime(uint16_t minutes, uint16_t seconds);
+        void SetZero();
+        void SetOff();
+
+        /// @brief Rotates the entire display 180 degrees.
+        ///
+        /// Each module has its position reversed and its segments rotated 180 degrees.
+        /// This allows the hardware to be panel mounted upside-down if necessary.
+        void FlipVertical();
 };
