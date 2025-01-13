@@ -28,38 +28,39 @@ set(PICO_BOARD pico CACHE STRING "Board type")
 # Pull in Raspberry Pi Pico SDK (must be before project)
 include(pico_sdk_import.cmake)
 
-project(DisplayTest C CXX ASM)
-
-set(PICO_CXX_ENABLE_EXCEPTIONS 1)
-
-set(PICO_CXX_ENABLE_RTTI 1)
+project(Pico C CXX ASM)
 
 # Initialise the Raspberry Pi Pico SDK
 pico_sdk_init()
 
 # Add executable. Default name is the project name, version 0.1
 
-add_executable(DisplayTest
-    DisplayTest.cpp
-    TM1637.cpp
+add_executable(Pico
+    main.cpp
+    box.cpp
+    button.cpp
+    pausable_timer.cpp
+    switch.cpp
+    timer_display.cpp
+    timer.cpp
+    tm1637.cpp
 )
 
-pico_set_program_name(DisplayTest "DisplayTest")
-pico_set_program_version(DisplayTest "0.1")
+pico_set_program_name(Pico "Pico")
+pico_set_program_version(Pico "0.1")
 
 # Modify the below lines to enable/disable output over UART/USB
-pico_enable_stdio_uart(DisplayTest 1)
-pico_enable_stdio_usb(DisplayTest 0)
+pico_enable_stdio_uart(Pico 1)
+pico_enable_stdio_usb(Pico 0)
 
 # Add the standard library to the build
-target_link_libraries(DisplayTest
-    pico_stdlib
-)
+target_link_libraries(Pico
+        pico_stdlib)
 
 # Add the standard include files to the build
-target_include_directories(DisplayTest PRIVATE
+target_include_directories(Pico PRIVATE
   ${CMAKE_CURRENT_LIST_DIR}
 )
 
-pico_add_extra_outputs(DisplayTest)
+pico_add_extra_outputs(Pico)
 
