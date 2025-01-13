@@ -1,4 +1,3 @@
-#include <stdio.h>
 #include "consulting_clock.hpp"
 #include "pico/stdlib.h"
 

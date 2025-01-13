@@ -1,6 +1,4 @@
 #include <cstdint>
-#include <stdexcept>
-#include <stdio.h>
 #include "consulting_clock.hpp"
 #include "pico/stdlib.h"
 #include "TM1637.hpp"

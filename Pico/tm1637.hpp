@@ -5,6 +5,7 @@
  * @date    2025-01-12
  */
 
+#pragma once
 #include <cstdint>
 
 const uint8_t CMD_DATA = 0b01000000; // data command
