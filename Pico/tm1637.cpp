@@ -55,7 +55,8 @@ void TM1637::setTime(uint16_t minutes, uint16_t seconds)
 {
     if (DIGIT_COUNT != 4)
     {
-        throw std::logic_error("Only four-digit displays are supported currently");
+        //throw std::logic_error("Only four-digit displays are supported currently");
+        return;
     }
 
     if (minutes <= 99) // possible to display mm:ss
