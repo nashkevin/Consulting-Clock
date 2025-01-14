@@ -5,8 +5,12 @@ void PausableTimer::PauseTimer()
     if (isRunning)
     {
         isRunning = false;
+        
         storedMinutes += Timer::GetElapsedMinutes();
         storedSeconds += Timer::GetElapsedSeconds();
+
+        storedMinutes += storedSeconds / SEC_TO_MIN;
+        storedSeconds %= SEC_TO_MIN;
     }
 }
 

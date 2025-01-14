@@ -182,6 +182,7 @@ void TM1637::SetOff()
     SetSegments(display, MODULE_COUNT, 0);
 }
 
+// XXX - broken, in need of debugging
 void TM1637::FlipVertical()
 {
     for (uint8_t i = 0; i < MODULE_COUNT / 2; i++)
@@ -191,4 +192,6 @@ void TM1637::FlipVertical()
         display[i] = GetFlippedByte(MODULE_COUNT - (i + 1));
         display[MODULE_COUNT - (i + 1)] = temp;
     }
+
+    SetSegments(display, MODULE_COUNT, 0);
 }
