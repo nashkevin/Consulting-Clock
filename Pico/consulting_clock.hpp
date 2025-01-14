@@ -13,7 +13,7 @@ const uint8_t SEC_TO_MIN = 60;
 const uint8_t MIN_TO_HOUR = 60;
 
 const uint8_t GPIO_LOW = 0;
-const uint8_t GPIO_HIGH = 0; // only use to write - for reads, use !LOW
+const uint8_t GPIO_HIGH = 1; // only use to write - for reads, use !GPIO_LOW
 
 const uint64_t HOLD_TIME_US = 3'000'000; // 3 seconds
 
