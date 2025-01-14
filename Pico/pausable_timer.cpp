@@ -17,12 +17,12 @@ uint64_t PausableTimer::GetElapsed()
 
 uint16_t PausableTimer::GetElapsedMinutes()
 {
-    return GetElapsed() / US_TO_MIN;
+    return PausableTimer::GetElapsed() / US_TO_MIN;
 }
 
 uint16_t PausableTimer::GetElapsedSeconds()
 {
-    return GetElapsed() % US_TO_MIN / US_TO_SEC;
+    return PausableTimer::GetElapsed() % US_TO_MIN / US_TO_SEC;
 }
 
 void PausableTimer::ResetTimer()

@@ -49,7 +49,6 @@ void TM1637::Pause()
 
 void TM1637::WriteByte(uint8_t b)
 {
-    printf("%d\n", b);
     for (uint8_t i = 0; i < BITS_IN_BYTE; i++)
     {
         gpio_put(pinDio, (b >> i) & GPIO_HIGH);

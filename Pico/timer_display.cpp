@@ -9,17 +9,9 @@ void TimerDisplay::UpdateDisplay(bool isShowZero)
     {
         minutes = GetElapsedMinutes();
         seconds = GetElapsedSeconds();
-    }
-    else
-    {
-        if (0 < storedMinutes)
-        {
-            minutes = storedMinutes;
-        }
-        if (0 < storedSeconds)
-        {
-            seconds = storedSeconds;
-        }
+    } else {
+        minutes = 0 < storedMinutes ? storedMinutes : 0;
+        seconds = 0 < storedSeconds ? storedSeconds : 0;
     }
 
     if (isRunning || 0 < seconds || 0 < minutes)

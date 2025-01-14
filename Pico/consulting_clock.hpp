@@ -45,6 +45,7 @@ class Timer
         /// @return whole second remainder of elapsed time
         virtual uint16_t GetElapsedSeconds();
         virtual void ResetTimer();
+        virtual void RestartTimer();
 };
 
 class PausableTimer : public Timer
@@ -84,11 +85,23 @@ class Button : public Switch, public Timer
         uint64_t requiredHoldTimeUs;
 
     public:
+        /// @brief A momentary push button that can be pressed, held, or neither
+        /// @param pin GPIO pin
+        /// @param requiredHoldTimeUs used to determine whether the button is pressed or held
         Button(uint8_t pin, uint64_t requiredHoldTimeUs = HOLD_TIME_US);
 
         enum class State : uint8_t
         {
-            Released, Pressed, Held
+            /// @brief Button is up, open switch
+            Released,
+            /// @brief Button is down and previous state was `Released`
+            Pressed,
+            /// @brief Button is down and previous state was not `Released`
+            ///        but has not reached required hold time
+            HeldShort,
+            /// @brief Button is down and previous state was not `Released`
+            ///        and has reached required hold time
+            HeldLong
         };
 
         State GetState();

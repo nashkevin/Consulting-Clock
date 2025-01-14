@@ -16,7 +16,12 @@ Button::State Button::GetState()
         }
         else if (requiredHoldTimeUs < GetElapsed())
         {
-            return State::Held;
+            RestartTimer();
+            return State::HeldLong;
+        }
+        else
+        {
+            return State::HeldShort;
         }
     }
     ResetTimer();

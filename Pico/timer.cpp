@@ -17,12 +17,12 @@ uint64_t Timer::GetElapsed()
 
 uint16_t Timer::GetElapsedMinutes()
 {
-    return GetElapsed() / US_TO_MIN;
+    return Timer::GetElapsed() / US_TO_MIN;
 }
 
 uint16_t Timer::GetElapsedSeconds()
 {
-    return GetElapsed() % US_TO_MIN / US_TO_SEC;
+    return Timer::GetElapsed() % US_TO_MIN / US_TO_SEC;
 }
 
 void Timer::ResetTimer()
@@ -32,4 +32,9 @@ void Timer::ResetTimer()
         isRunning = false;
         startTime = 0;
     }
+}
+
+void Timer::RestartTimer()
+{
+    startTime = 0;
 }
