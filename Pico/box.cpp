@@ -3,7 +3,7 @@
 
 void Box::PollButtons()
 {
-    if (resetButton.IsButtonHoldSufficient())
+    if (resetButton.GetState() == Button::State::Held)
     {
         ResetTimerDisplays();
         return;
@@ -11,7 +11,13 @@ void Box::PollButtons()
 
     for (uint8_t i = 0; i < TIMER_COUNT; i++)
     {
-        if (timerButtons[i].IsNewPress())
+        Button::State state = timerButtons[i].GetState();
+        if (state == Button::State::Held)
+        {
+            timers[i].ResetTimer();
+            return;
+        }
+        if (state == Button::State::Pressed)
         {
             if (timers[i].isRunning)
             {
@@ -27,19 +33,12 @@ void Box::PollButtons()
             }
             return;
         }
-
-        if (timerButtons[i].IsButtonHoldSufficient())
-        {
-            timers[i].ResetTimer();
-            return;
-        }
     }
-    
 }
 
 void Box::UpdateTimerDisplays()
 {
-    if (!hideDisplaySwitch.IsDown())
+    if (showDisplaySwitch.IsClosed())
     {
         for (uint8_t i = 0; i < TIMER_COUNT; i++)
         {

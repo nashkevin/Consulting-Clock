@@ -5,31 +5,20 @@ Button::Button(uint8_t pin, uint64_t requiredHoldTimeUs) : Switch(pin)
     this->requiredHoldTimeUs = requiredHoldTimeUs;
 }
 
-bool Button::IsNewPress()
+Button::State Button::GetState()
 {
-    return !isRunning && IsDown();
-}
-
-bool Button::IsButtonHoldSufficient()
-{
-    if (requiredHoldTimeUs == 0)
+    if (IsClosed())
     {
-        return true;
-    }
-    return IsDown() && requiredHoldTimeUs < GetElapsed();
-}
-
-bool Button::IsDown()
-{
-    bool isDown = Switch::IsDown();
-    if (0 < requiredHoldTimeUs)
-    {
-        if (isDown)
+        if (!isRunning)
         {
             StartTimer();
-        } else {
-            ResetTimer();
+            return State::Pressed;
+        }
+        else if (requiredHoldTimeUs < GetElapsed())
+        {
+            return State::Held;
         }
     }
-    return isDown;
+    ResetTimer();
+    return State::Released;
 }

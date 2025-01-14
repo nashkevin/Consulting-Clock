@@ -6,10 +6,11 @@ int main()
 {
     stdio_init_all();
     Box box = Box();
+    box.ResetTimerDisplays();
 
     while (true) {
         box.PollButtons();
         box.UpdateTimerDisplays();
-        sleep_ms(500); // action only required every second
+        sleep_ms(1000);
     }
 }

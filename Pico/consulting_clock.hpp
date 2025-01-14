@@ -28,7 +28,7 @@ class Switch
     public:
         Switch(uint8_t pin);
 
-        virtual bool IsDown();
+        virtual bool IsClosed();
 };
 
 class Timer
@@ -86,9 +86,14 @@ class Button : public Switch, public Timer
     public:
         Button(uint8_t pin, uint64_t requiredHoldTimeUs = HOLD_TIME_US);
 
-        bool IsNewPress();
-        bool IsButtonHoldSufficient();
-        bool IsDown() override;
+        enum class State : uint8_t
+        {
+            Released, Pressed, Held
+        };
+
+        State GetState();
+        //bool IsNewPress();
+        //bool IsLongPress();
 };
 
 class Box
@@ -103,7 +108,7 @@ class Box
             {28}, {27}, {26}, {22}, {21}
         };
         Button resetButton = Button(20);
-        Switch hideDisplaySwitch = Switch(17);
+        Switch showDisplaySwitch = Switch(17);
     
     public:
         void PollButtons();
