@@ -69,18 +69,18 @@ class TM1637
         void Stop();
         void Pause();
 
+        void WriteByte(uint8_t b);
+
+        void WriteDataCommand();
+        void WriteDisplayCommand();
+
         /// @brief Sets the state of one or more 7-segment modules.
         /// 
         /// Starting at `position`, writes `bytes` until `length` is reached.
         /// @param bytes the encoded state(s)
         /// @param length the number of bytes encoded (how many modules affected)
         /// @param position starting index of the first affected module
-        void SetSegments(const uint8_t bytes[], const uint8_t length = 1, uint8_t position = 0);
-
-        void WriteDataCommand();
-        void WriteDisplayCommand();
-
-        void WriteByte(uint8_t b);
+        void SetSegments(const uint8_t* bytes, const uint8_t length = 1, uint8_t position = 0);
 
         /// @brief Flips a single display module vertically
         /// @return a byte that has the ABC segments swapped with DEF,
@@ -90,7 +90,7 @@ class TM1637
     public:
         TM1637(uint8_t pinClk, uint8_t pinDio);
         
-        void setBrightness(uint8_t brightness);
+        void SetBrightness(uint8_t brightness);
         
         void SetTime(uint16_t minutes, uint16_t seconds);
         void SetZero();

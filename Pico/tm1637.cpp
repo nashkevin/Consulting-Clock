@@ -9,7 +9,7 @@ TM1637::TM1637(uint8_t pinClk, uint8_t pinDio)
 {
     this->pinClk = pinClk;
     this->pinDio = pinDio;
-    this->brightness = 0; // I prefer minimum brightness by default
+    this->brightness = 0;
 
     gpio_set_dir(pinClk, GPIO_OUT);
     gpio_set_dir(pinDio, GPIO_OUT);
@@ -24,7 +24,95 @@ TM1637::TM1637(uint8_t pinClk, uint8_t pinDio)
 }
 
 
-void TM1637::setBrightness(uint8_t brightness)
+void TM1637::Start()
+{
+    gpio_put(pinDio, GPIO_LOW);
+    Pause();
+    gpio_put(pinClk, GPIO_LOW);
+    Pause();
+}
+
+void TM1637::Stop()
+{
+    gpio_put(pinDio, GPIO_LOW);
+    Pause();
+    gpio_put(pinClk, GPIO_HIGH);
+    Pause();
+    gpio_put(pinDio, GPIO_HIGH);
+    Pause();
+}
+
+void TM1637::Pause()
+{
+    sleep_us(CLK_PAUSE_US);
+}
+
+void TM1637::WriteByte(uint8_t b)
+{
+    printf("%d\n", b);
+    for (uint8_t i = 0; i < BITS_IN_BYTE; i++)
+    {
+        gpio_put(pinDio, (b >> i) & GPIO_HIGH);
+        Pause();
+        gpio_put(pinClk, GPIO_HIGH);
+        Pause();
+        gpio_put(pinClk, GPIO_LOW);
+        Pause();
+    }
+    gpio_put(pinClk, GPIO_LOW);
+    Pause();
+    gpio_put(pinClk, GPIO_HIGH);
+    Pause();
+    gpio_put(pinClk, GPIO_LOW);
+    Pause();
+    
+    // commands are answered with an ACK signal,
+    // but we're not sophisticated enough to care
+}
+
+void TM1637::WriteDataCommand()
+{
+    Start();
+    WriteByte(CMD_DATA);
+    Stop();
+}
+
+void TM1637::WriteDisplayCommand()
+{
+    Start();
+    WriteByte(CMD_DISP | DISP_ON | this->brightness);
+    Stop();
+}
+
+void TM1637::SetSegments(const uint8_t *bytes, const uint8_t length, uint8_t position)
+{
+    if (MODULE_COUNT < position)
+    {
+        position = MODULE_COUNT;
+    }
+    WriteDataCommand();
+    Start();
+
+    WriteByte(CMD_ADDR | position);
+
+    for (uint8_t i = 0; i < length; i++)
+    {
+        WriteByte(bytes[i]);
+    }
+    Stop();
+    WriteDisplayCommand();
+}
+
+uint8_t TM1637::GetFlippedByte(uint8_t b)
+{
+    return
+        (b & (SEG_A | SEG_B | SEG_C)) << 3 |
+        (b & (SEG_D | SEG_E | SEG_F)) >> 3 |
+        (b & (SEG_G | SEG_SEP));
+}
+
+
+void TM1637::SetBrightness(uint8_t brightness)
 {
     this->brightness = (MAX_BRIGHTNESS < brightness) ? MAX_BRIGHTNESS : brightness;
     WriteDataCommand();
@@ -104,93 +192,4 @@ void TM1637::FlipVertical()
         display[i] = GetFlippedByte(MODULE_COUNT - (i + 1));
         display[MODULE_COUNT - (i + 1)] = temp;
     }
-}
-
-
-void TM1637::Start()
-{
-    gpio_put(pinDio, GPIO_LOW);
-    Pause();
-    gpio_put(pinClk, GPIO_LOW);
-    Pause();
-}
-
-void TM1637::Stop()
-{
-    gpio_put(pinDio, GPIO_LOW);
-    Pause();
-    gpio_put(pinClk, GPIO_HIGH);
-    Pause();
-    gpio_put(pinDio, GPIO_HIGH);
-    Pause();
-}
-
-void TM1637::Pause()
-{
-    sleep_us(CLK_PAUSE_US);
-}
-
-void TM1637::SetSegments(const uint8_t bytes[], const uint8_t length, uint8_t position)
-{
-    if (MODULE_COUNT < position)
-    {
-        position = MODULE_COUNT;
-    }
-    WriteDataCommand();
-    Start();
-
-    WriteByte(CMD_ADDR | position);
-
-    for (uint8_t i = 0; i < length; i++)
-    {
-        printf("%d = %d, ", i, bytes[i]);
-        WriteByte(bytes[i]);
-    }
-    printf("\n");
-    Stop();
-    WriteDisplayCommand();
-}
-
-void TM1637::WriteDataCommand()
-{
-    Start();
-    WriteByte(CMD_DATA);
-    Stop();
-}
-
-void TM1637::WriteDisplayCommand()
-{
-    Start();
-    WriteByte(CMD_DISP | DISP_ON | this->brightness);
-    Stop();
-}
-
-void TM1637::WriteByte(uint8_t b)
-{
-    for (uint8_t i = 0; i < BITS_IN_BYTE; i++)
-    {
-        gpio_put(pinDio, (b >> i) & GPIO_HIGH);
-        Pause();
-        gpio_put(pinClk, GPIO_HIGH);
-        Pause();
-        gpio_put(pinClk, GPIO_LOW);
-        Pause();
-    }
-    gpio_put(pinClk, GPIO_LOW);
-    Pause();
-    gpio_put(pinClk, GPIO_HIGH);
-    Pause();
-    gpio_put(pinClk, GPIO_LOW);
-    Pause();
-    
-    // commands are answered with an ACK signal,
-    // but we're not sophisticated enough to care
-}
-
-uint8_t TM1637::GetFlippedByte(uint8_t b)
-{
-    return
-        (b & (SEG_A | SEG_B | SEG_C)) << 3 |
-        (b & (SEG_D | SEG_E | SEG_F)) >> 3 |
-        (b & (SEG_G | SEG_SEP));
 }
