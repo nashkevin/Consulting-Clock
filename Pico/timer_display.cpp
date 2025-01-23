@@ -25,3 +25,15 @@ void TimerDisplay::UpdateDisplay(bool isShowZero)
         hw.SetOff();
     }
 }
+
+void TimerDisplay::SetTime(uint16_t minutes, uint16_t seconds)
+{
+    storedMinutes = minutes;
+    storedSeconds = seconds;
+    hw.SetTime(storedMinutes, storedSeconds);
+}
+
+void TimerDisplay::ClearDisplay()
+{
+    hw.SetOff();
+}

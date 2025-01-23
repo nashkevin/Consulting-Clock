@@ -77,6 +77,8 @@ class TimerDisplay : public PausableTimer
         /// @brief Change the hardware state
         /// @param isShowZero when timer is zero, show zeroes if true, turn off otherwise
         void UpdateDisplay(bool isShowZero = false);
+        void SetTime(uint16_t minutes, uint16_t seconds);
+        void ClearDisplay();
 };
 
 class Button : public Switch, public Timer
@@ -105,8 +107,6 @@ class Button : public Switch, public Timer
         };
 
         State GetState();
-        //bool IsNewPress();
-        //bool IsLongPress();
 };
 
 class Box
@@ -127,4 +127,5 @@ class Box
         void PollButtons();
         void UpdateTimerDisplays();
         void ResetTimerDisplays();
+        void TestDisplay();
 };

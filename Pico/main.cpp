@@ -11,6 +11,6 @@ int main()
     while (true) {
         box.PollButtons();
         box.UpdateTimerDisplays();
-        sleep_ms(250);
+        //box.TestDisplay();
     }
 }

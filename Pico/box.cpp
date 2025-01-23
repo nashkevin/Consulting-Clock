@@ -38,12 +38,15 @@ void Box::PollButtons()
 
 void Box::UpdateTimerDisplays()
 {
-    if (showDisplaySwitch.IsClosed())
+    for (uint8_t i = 0; i < TIMER_COUNT; i++)
     {
-        for (uint8_t i = 0; i < TIMER_COUNT; i++)
+        if (showDisplaySwitch.IsClosed())
         {
             timers[i].UpdateDisplay();
+        } else {
+            timers[i].ClearDisplay();
         }
+        
     }
 }
 
@@ -60,5 +63,17 @@ void Box::ResetTimerDisplays()
     for (uint8_t i = 0; i < TIMER_COUNT; i++)
     {
         timers[i].UpdateDisplay(false);
+    }
+}
+
+void Box::TestDisplay()
+{
+    for (uint16_t m = 0; m < 100; m++)
+    {
+        for (uint16_t s = 0; s < 60; s++)
+        {
+            timers[0].SetTime(m, s);
+            sleep_ms(100);
+        }        
     }
 }
