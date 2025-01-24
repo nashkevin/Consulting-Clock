@@ -9,7 +9,7 @@ int main()
     box.ResetTimerDisplays();
 
     while (true) {
-        box.PollButtons();
+        box.PollInputs();
         box.UpdateTimerDisplays();
         //box.TestDisplay();
     }

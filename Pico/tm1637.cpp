@@ -9,7 +9,7 @@ TM1637::TM1637(uint8_t pinClk, uint8_t pinDio)
 {
     this->pinClk = pinClk;
     this->pinDio = pinDio;
-    this->brightness = 0;
+    this->brightness = DEFAULT_BRIGHTNESS;
 
     gpio_set_dir(pinClk, GPIO_OUT);
     gpio_set_dir(pinDio, GPIO_OUT);
@@ -116,6 +116,22 @@ void TM1637::SetBrightness(uint8_t brightness)
     this->brightness = (MAX_BRIGHTNESS < brightness) ? MAX_BRIGHTNESS : brightness;
     WriteDataCommand();
     WriteDisplayCommand();
+}
+
+void TM1637::SetBrightness()
+{
+    brightness = (MAX_BRIGHTNESS <= brightness) ? 0 : brightness + 1;
+}
+
+void TM1637::SetDigits(uint16_t digits)
+{
+    uint16_t divisor = 1000;
+    for (uint8_t i = 0; i < MODULE_COUNT; i++)
+    {
+        display[i] = (digits < divisor) ? 0 : DIGIT_ENCODING[digits / divisor % 10];
+        divisor /= 10;
+    }
+    SetSegments(display, MODULE_COUNT, 0);
 }
 
 void TM1637::SetTime(uint16_t minutes, uint16_t seconds)

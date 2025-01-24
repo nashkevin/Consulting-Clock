@@ -1,11 +1,38 @@
 #include "consulting_clock.hpp"
 #include "pico/stdlib.h"
 
-void Box::PollButtons()
+bool Box::HandleDisplayOff()
+{
+    if (!showDisplaySwitch.IsClosed())
+    {
+        if (resetButton.GetState() == Button::State::Pressed) // reset button doubles as
+        {                                                     // brightness adjustment
+            for (uint8_t i = 0; i < TIMER_COUNT; i++)         // while the display is off
+            {
+                timers[i].SetBrightness();
+                timers[i].SetDigits(1234);
+            }
+            sleep_ms(1000);
+        }
+        return true; // normal inputs disabled when display is off
+    }
+    return false;
+}
+
+bool Box::HandleReset()
 {
     if (resetButton.GetState() == Button::State::HeldLong)
     {
         ResetTimerDisplays();
+        return true;
+    }
+    return false;
+}
+
+void Box::PollInputs()
+{
+    if (HandleDisplayOff() || HandleReset())
+    {
         return;
     }
 
@@ -70,10 +97,11 @@ void Box::TestDisplay()
 {
     for (uint16_t m = 0; m < 100; m++)
     {
+        timers[0].SetBrightness();
         for (uint16_t s = 0; s < 60; s++)
         {
             timers[0].SetTime(m, s);
             sleep_ms(100);
-        }        
+        }
     }
 }

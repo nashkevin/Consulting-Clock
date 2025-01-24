@@ -28,6 +28,8 @@ class Switch
     public:
         Switch(uint8_t pin);
 
+        /// @brief Gets the state of a switch
+        /// @return `true` if the circuit is closed (switch ON), `false` otherwise
         virtual bool IsClosed();
 };
 
@@ -77,8 +79,12 @@ class TimerDisplay : public PausableTimer
         /// @brief Change the hardware state
         /// @param isShowZero when timer is zero, show zeroes if true, turn off otherwise
         void UpdateDisplay(bool isShowZero = false);
+        void SetDigits(uint16_t digits);
         void SetTime(uint16_t minutes, uint16_t seconds);
         void ClearDisplay();
+        void SetBrightness(uint8_t brightness);
+        /// @brief increases brightness by one level, looping from maximum to minimum
+        void SetBrightness();
 };
 
 class Button : public Switch, public Timer
@@ -122,9 +128,12 @@ class Box
         };
         Button resetButton = Button(20);
         Switch showDisplaySwitch = Switch(17);
-    
+
+        bool HandleDisplayOff();
+        bool HandleReset();
+
     public:
-        void PollButtons();
+        void PollInputs();
         void UpdateTimerDisplays();
         void ResetTimerDisplays();
         void TestDisplay();

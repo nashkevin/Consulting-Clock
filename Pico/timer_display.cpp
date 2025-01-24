@@ -26,6 +26,11 @@ void TimerDisplay::UpdateDisplay(bool isShowZero)
     }
 }
 
+void TimerDisplay::SetDigits(uint16_t digits)
+{
+    hw.SetDigits(digits);
+}
+
 void TimerDisplay::SetTime(uint16_t minutes, uint16_t seconds)
 {
     storedMinutes = minutes;
@@ -36,4 +41,14 @@ void TimerDisplay::SetTime(uint16_t minutes, uint16_t seconds)
 void TimerDisplay::ClearDisplay()
 {
     hw.SetOff();
+}
+
+void TimerDisplay::SetBrightness(uint8_t brightness)
+{
+    hw.SetBrightness(brightness);
+}
+
+void TimerDisplay::SetBrightness()
+{
+    hw.SetBrightness();
 }

@@ -13,9 +13,5 @@ Switch::Switch(uint8_t pin)
 
 bool Switch::IsClosed()
 {
-    if (pin != 17 && gpio_get(pin) == 0)
-    {
-        printf("pin %d = %d\n", pin, gpio_get(pin));
-    }
     return gpio_get(pin) == GPIO_LOW;
 }
