@@ -19,7 +19,7 @@ by a rigid material (plywood does the trick).
 ## Functions
 
 - Pressing a top button will start counting time on the display below it; if a count is running on a different
-display, it will be paused automatically.
+display, it will be paused automatically. Only one counter can run at a time.
 
 - Pressing the top button above a running counter will pause that counter.
 
