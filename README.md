@@ -16,7 +16,7 @@ It's made up of five buttons plus a reset button, five displays, a display mutin
 connected to a Pi Pico flashed with the software within the `Pico` folder of this repository and surrounded
 by a rigid material (plywood does the trick).
 
-## Function
+## Functions
 
 - Pressing a top button will start counting time on the display below it; if a count is running on a different
 display, it will be paused automatically.
