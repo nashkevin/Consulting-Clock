@@ -118,9 +118,14 @@ void TM1637::SetBrightness(uint8_t brightness)
     WriteDisplayCommand();
 }
 
-void TM1637::SetBrightness()
+void TM1637::IncrementBrightness()
 {
     brightness = (MAX_BRIGHTNESS <= brightness) ? 0 : brightness + 1;
+}
+
+void TM1637::DecrementBrightness()
+{
+    brightness = (brightness <= 0) ? MAX_BRIGHTNESS : brightness - 1;
 }
 
 void TM1637::SetDigits(uint16_t digits)

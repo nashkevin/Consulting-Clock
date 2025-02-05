@@ -15,7 +15,7 @@ const uint8_t MIN_TO_HOUR = 60;
 const uint8_t GPIO_LOW = 0;
 const uint8_t GPIO_HIGH = 1; // only use to write - for reads, use !GPIO_LOW
 
-const uint64_t HOLD_TIME_US = 3'000'000; // 3 seconds
+const uint64_t HOLD_TIME_US = 2'000'000; // 2 seconds
 
 const uint8_t TIMER_COUNT = 5;
 
@@ -84,7 +84,9 @@ class TimerDisplay : public PausableTimer
         void ClearDisplay();
         void SetBrightness(uint8_t brightness);
         /// @brief increases brightness by one level, looping from maximum to minimum
-        void SetBrightness();
+        void IncrementBrightness();
+        /// @brief decreases brightness by one level, looping from minimum to maximum
+        void DecrementBrightness();
 };
 
 class Button : public Switch, public Timer

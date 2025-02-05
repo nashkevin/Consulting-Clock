@@ -48,7 +48,12 @@ void TimerDisplay::SetBrightness(uint8_t brightness)
     hw.SetBrightness(brightness);
 }
 
-void TimerDisplay::SetBrightness()
+void TimerDisplay::IncrementBrightness()
 {
-    hw.SetBrightness();
+    hw.IncrementBrightness();
+}
+
+void TimerDisplay::DecrementBrightness()
+{
+    hw.DecrementBrightness();
 }

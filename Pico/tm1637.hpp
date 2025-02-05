@@ -28,7 +28,7 @@ const uint8_t DISP_ON = 0b00001000;
 const uint8_t CLK_PAUSE_US = 10; // microseconds between CLK transmissions
 
 const uint8_t MAX_BRIGHTNESS = 7; // defined by TM1637 spec, 1/16th pulse width increments
-const uint8_t DEFAULT_BRIGHTNESS = 2;
+const uint8_t DEFAULT_BRIGHTNESS = 0;
 const uint8_t MODULE_COUNT = 4; // how many 7-segment modules are in a display
 
 const uint8_t BITS_IN_BYTE = 8; // a true constant in modern computing
@@ -93,8 +93,10 @@ class TM1637
         
         void SetBrightness(uint8_t brightness);
         /// @brief increases brightness by one level, looping from maximum to minimum
-        void SetBrightness();
-        
+        void IncrementBrightness();
+        /// @brief decreases brightness by one level, looping from minimum to maximum
+        void DecrementBrightness();
+
         void SetDigits(const uint16_t digits);
         void SetTime(uint16_t minutes, uint16_t seconds);
         void SetZero();

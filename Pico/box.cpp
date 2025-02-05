@@ -5,14 +5,22 @@ bool Box::HandleDisplayOff()
 {
     if (!showDisplaySwitch.IsClosed())
     {
-        if (resetButton.GetState() == Button::State::Pressed) // reset button doubles as
-        {                                                     // brightness adjustment
-            for (uint8_t i = 0; i < TIMER_COUNT; i++)         // while the display is off
+        // when display is off, button one decreases brightness and button two increases it
+        bool isDimming = timerButtons[0].GetState() == Button::State::Pressed;
+        if (isDimming || timerButtons[1].GetState() == Button::State::Pressed)
+        {
+            for (uint8_t i = 0; i < TIMER_COUNT; i++)
             {
-                timers[i].SetBrightness();
+                if (isDimming)
+                {
+                    timers[i].DecrementBrightness();
+                } else {
+                    timers[i].IncrementBrightness();
+                }
+                
                 timers[i].SetDigits(1234);
             }
-            sleep_ms(1000);
+            sleep_ms(500);
         }
         return true; // normal inputs disabled when display is off
     }
@@ -97,7 +105,7 @@ void Box::TestDisplay()
 {
     for (uint16_t m = 0; m < 100; m++)
     {
-        timers[0].SetBrightness();
+        timers[0].IncrementBrightness();
         for (uint16_t s = 0; s < 60; s++)
         {
             timers[0].SetTime(m, s);
