@@ -4,10 +4,10 @@ This is a fairly simple electronics project I started to solve the problem of tr
 doing things. I dubbed it "Consulting Clock", but the name isn't important.
 
 Manually tracking time is a pain, and doing so retrospectively is even worse. There are probably apps for this
-sort of thing, but I like to minimize my reliance on smartphones. You could use a stopwatch, but if
-you wanted to spread your time across multiple tasks within a single work session, you'd need more than one.
+sort of thing, but I like to minimize my reliance on smartphones. You could use a traditional stopwatch, but
+if you wanted to spread your time across multiple tasks within a single work session, you'd need more than one.
 
-Thus this box of stopwatches was born.
+Thus this humble box of low-res stopwatches was born.
 
 The (nearly) finished prototype looks something like this
 ![image](https://github.com/user-attachments/assets/38c301e4-a153-41fd-a19e-fb8f7e7e2b55)
@@ -36,14 +36,21 @@ it.
 display modules have eight brightness levels. Each button press will increase the level by one, until the
 maximum brightness is reached, at which point the brightness will be set to the minimum level.
 
-- Each display uses a `mm:ss` format until 99 minutes are reached, and then the format becomes `hh:mm`.
+- Each display uses a `mm:ss` format until 100 minutes are reached, and then the format becomes `hh:mm`.
 
 
 ## Planning Documents
+### To-Do
+- **BUG**: wire `RUN` pin (30) to `VSYS` (40) to prevent spurious reboots
+- **BUG**: fix display format bug at 100 min
+- Add interactive settings, reached by switching display off and pressing reset
+    - Back: press to exit menu
+    - Count: set counting up or down, allowing use as a timer as well
+    - Interval: select interval in minutes or hours, the length of time when counting down or to trigger a
+                signaling event (cool animation or something) when counting up
+    - Signal: set enabled or disabled, will flash/animate when interval is reached if enabled
+    - Brightness: can already be adjusted, but make it easier with numeric display and +/- buttons rather
+                  than just increasing within a loop.
+### Images
 ![image](https://github.com/user-attachments/assets/dd8e6f7d-5712-434d-bb7e-95afcd01d34c)
 ![image](https://github.com/user-attachments/assets/7190c644-a616-464b-9561-7789d0f01bb7)
-
-
-
-
-
